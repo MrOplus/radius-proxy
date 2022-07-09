@@ -6,12 +6,15 @@ const fromClient = dgram.createSocket('udp4');
 require('dotenv').config();
 const config = {
     secret: process.env.secret || 'secret',
-    local_port : process.env.local_port || '1812',
+    local_port : process.env.local_port || 1812,
     remote_port : process.env.remote_port || 8812,
     remote_host : process.env.remote_server || '127.0.0.1',
     ampq : process.env.amqp || 'amqp://guest:guest@172.16.0.10:5672',
     enable_ampq : process.env.enable_ampq || false,
 }
+console.log(process.env);
+
+
 const timeout_duration = 500;
 //region AMQP
 const connection  = ampq.connect([config.ampq]);
@@ -36,7 +39,7 @@ fromClient.on('error', (err) => {
 fromClient.on('message', (msg, client_info) => {
     let toServer = dgram.createSocket('udp4');
     let decoded_request = radius.decode({ packet: msg, secret: config.secret });
-    toServer.send(msg,config.remote_port, config.remote_host,(err) => {
+    toServer.send(msg,+config.remote_port, config.remote_host,(err) => {
         if (err != null){
             fromClient.send(radius.encode_response({
                 packet: decoded_request,

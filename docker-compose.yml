@@ -1,0 +1,15 @@
+version: "3"
+services:
+  radius:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "1812:1812/udp"
+    environment:
+      - secret=secret
+      - remote_port=1813
+      - remote_host=192.168.1.50
+      - ampq=amqp://guest:guest@localhost:5672/
+      - enable_ampq=false
+    restart: always
